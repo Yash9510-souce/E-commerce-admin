@@ -76,6 +76,7 @@ exports.updateProduct = async(req,res,next) => {
 
         if (req.file) {
             productImage = req.file.filename;
+            console.log(`New file uploaded: ${productImage}`);
             filehelper.clearpath(updateProduct.productImage)
         } else {
             console.log(`No new file uploaded, keeping existing image: ${productImage}`);
