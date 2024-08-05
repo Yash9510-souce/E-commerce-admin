@@ -3,7 +3,7 @@ const fs = require('fs')
 
 const clearpath = filepath => {
 
-    const uploadpath = path.join(__dirname, '..', '..', 'assets', 'Product_image')
+    const uploadpath = path.join(__dirname, '..', 'assets', 'Product_image')
        console.log(uploadpath)
     const oldImagePath = path.join(uploadpath,filepath);
         console.log(oldImagePath)

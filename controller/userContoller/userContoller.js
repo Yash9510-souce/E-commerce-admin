@@ -90,9 +90,11 @@ exports.userUpdate = async (req,res,next) => {
             throw new Error("User Not Found!")
         }
 
+        const hasspassword = await bcrypt.hash(password,12)
+
         Find_User.userName = userName
         Find_User.email = email
-        Find_User.password = password
+        Find_User.password = hasspassword
 
         let Update_User = await Find_User.save()
         

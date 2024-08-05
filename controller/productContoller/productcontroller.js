@@ -43,7 +43,7 @@ exports.addProduct = async (req,res,next) => {
         const product = await Product.create({
             ...productData,
             productImage:imageUrl,
-            adminId:req.adminId
+            adminId:req.adminId.populate
         })
         
         res.status(201).json({
@@ -77,7 +77,9 @@ exports.updateProduct = async(req,res,next) => {
         if (req.file) {
             productImage = req.file.filename;
             console.log(`New file uploaded: ${productImage}`);
-            filehelper.clearpath(updateProduct.productImage)
+            let oldImagePath = updateProduct.productImage
+            filehelper.clearpath(oldImagePath)
+            
         } else {
             console.log(`No new file uploaded, keeping existing image: ${productImage}`);
         }
@@ -116,6 +118,9 @@ exports.deleteProduct = async (req,res,next) => {
         if(Find_Product.adminId.toString() !== req.adminId){
             throw new Error('You are not Remove this Product!')
         }
+
+        let oldImagePath = Find_Product.productImage
+        filehelper.clearpath(oldImagePath)
 
         let Delete_Product = await Product.findByIdAndDelete(delete_id)
         

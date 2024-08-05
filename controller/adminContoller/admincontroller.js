@@ -101,3 +101,36 @@ exports.adminLogin = async (req,res,next) => {
         })
     }
 }
+
+
+exports.adminUpdate = async (req,res,next) => {
+    try {
+        const {update_id} = req.params
+        const {email,password} = req.body
+
+        let Find_Admin = await Admin.findById(update_id)
+        if(!Find_Admin){
+            throw new Error("Admin Not Found!")
+        }
+
+        if(Find_Admin.email !== email){
+            throw new Error("Admin E-mail Not Match for reset password!")
+        }
+
+        const hasspassword = await bcrypt.hash(password,12)
+
+        Find_Admin.password = hasspassword
+
+        let Update_Admin = await Find_Admin.save()
+        
+        res.status(200).json({
+            message: "ADMIN PASSWORD UPDTAED SUCESSFULLY !",
+            UpdateAdmin:Update_Admin
+        })
+
+    } catch(error) {
+        res.status(404).json({
+            message:error.message
+        })
+    }
+}

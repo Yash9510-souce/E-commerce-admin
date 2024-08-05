@@ -24,7 +24,7 @@ const fileFilter = (req, file, cb) => {
       } else {
         cb(new Error("Invalid file type. Only image files are allowed."));
       }
-    }
+}
 
 const upload = multer({ storage:storage,fileFilter:fileFilter })
 
