@@ -10,4 +10,5 @@ router.put('/user-update/:update_id',usercontroller.userUpdate)
 router.delete('/user-delete/:delete_id',usercontroller.userDelete)
 
 
+
 module.exports = router

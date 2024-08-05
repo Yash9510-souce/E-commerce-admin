@@ -15,7 +15,18 @@ const userSchema = new Schema(
         password: {
             type: String,
             required: true
-        }
+        },
+        cart:[{
+            product: {
+                type: Schema.Types.ObjectId,
+                ref:'product',
+                required:true
+            },
+            quantity:{
+                type: Number,
+                required: true
+            }
+        }]
     },
     {
         timestamps: true

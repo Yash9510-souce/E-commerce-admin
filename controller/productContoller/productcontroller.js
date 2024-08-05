@@ -43,7 +43,7 @@ exports.addProduct = async (req,res,next) => {
         const product = await Product.create({
             ...productData,
             productImage:imageUrl,
-            adminId:req.adminId.populate
+            adminId:req.adminId
         })
         
         res.status(201).json({
@@ -57,6 +57,37 @@ exports.addProduct = async (req,res,next) => {
         })
     }
 }
+
+
+exports.searchProducts = async (req, res, next) => {
+    try {
+        const { keyword } = req.query;
+
+        if (!keyword) {
+            throw new Error("Keyword is required")
+        }
+
+        // Perform a case-insensitive search using a regex
+        const products = await Product.find({
+            productName: { $regex: keyword, $options: 'i' }
+        });
+
+        if (products.length === 0) {
+            throw new Error("No products found")
+        }
+
+        res.status(200).json({
+            message:"PRODUCT SEARCH SUCESSFULLY!",
+            serach_pro:products
+        });
+
+    } catch (error) {
+        res.status(404).json({
+            message:error.message
+        })
+    }
+};
+
 
 exports.updateProduct = async(req,res,next) => {
     try {

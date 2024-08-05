@@ -26,7 +26,8 @@ exports.userSignup = async (req,res,next) => {
 
         const USER_REGISTER = await User.create({ 
             ...userData,
-            password:hasspassword
+            password:hasspassword,
+            cart:[]
          })
 
         res.status(201).json({
@@ -61,7 +62,7 @@ exports.userLogin = async (req,res,next) => {
         }
 
         const Token = jwt.sign({
-            _id: user._id
+            userId: user._id
         }
         ,process.env.JWT_SECRET_KEY_USER,
         { expiresIn: '3h' })

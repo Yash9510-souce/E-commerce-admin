@@ -34,4 +34,7 @@ router.post('/add-product',SECURE_CONTROLLER.ADMIN_JWT,upload.single("productIma
 router.put('/product-update/:update_id',SECURE_CONTROLLER.ADMIN_JWT,upload.single("productImage"),productcontroller.updateProduct)
 router.delete('/product-delete/:delete_id',SECURE_CONTROLLER.ADMIN_JWT,productcontroller.deleteProduct)
 
+//Admin Product serach
+router.get('/serach',SECURE_CONTROLLER.ADMIN_JWT,productcontroller.searchProducts)
+
 module.exports = router

@@ -36,7 +36,6 @@ exports.ADMIN_JWT = async (req, res, next) => {
 
 exports.USER_JWT = async (req, res, next) => {
     try {
-        console.log(req.headers.authorization);
         let TOKEN = req.headers.authorization.split(' ')[1];
 
         if (!TOKEN) {
@@ -45,11 +44,13 @@ exports.USER_JWT = async (req, res, next) => {
 
         let CHECK_VALID_TOKEN = jwt.verify(TOKEN, process.env.JWT_SECRET_KEY_USER);
 
-        let CHECK_VALID_USER = await USER.findById({ _id: CHECK_VALID_TOKEN._id });
+        let CHECK_VALID_USER = await USER.findById({ _id: CHECK_VALID_TOKEN.userId });
 
         if (!CHECK_VALID_USER) {
             throw new Error("INVALID TOKEN OR INVALID USER FOR THIIS TOKEN !");
         }
+
+        req.userId = CHECK_VALID_TOKEN.userId
 
         next();
     } catch (error) {
