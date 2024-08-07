@@ -1,23 +1,22 @@
 const Product = require('../../model/product/product')
 const filehelper = require('../../util/removeImageHelper')
 
-exports.getProduct = async (req,res,next) => {
+exports.getProduct = async (req, res, next) => {
     try {
 
-        const products = await Product.find().populate('adminId')
+        const products = await Product.find({ status: 'on' })
 
         res.status(200).json({
-            message: "PRODUCT FATCH SUCESSFULLY !",
-            Product_Data:products
-        })
+            message: "PRODUCT FETCH SUCCESSFULLY!",
+            Product_Data: products
+        });
 
-    } catch(error) {
+    } catch (error) {
         res.status(404).json({
-            message:error.message
-        })
+            message: error.message
+        });
     }
-}
-
+};
 
 exports.addProduct = async (req,res,next) => {
     try {
@@ -166,3 +165,37 @@ exports.deleteProduct = async (req,res,next) => {
         })
     }
 }
+
+
+exports.updateProductStatus = async (req, res, next) => {
+    try {
+        const { productId } = req.params;
+        const { status } = req.body;
+
+        // Validate the status
+        if (!status || !['on', 'off'].includes(status)) {
+            return res.status(400).json({
+                message: "Invalid status value. It must be either 'on' or 'off'."
+            });
+        }
+
+        // Find the product by ID and update its status
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        product.status = status;
+        await product.save();
+
+        res.status(200).json({
+            message: "Product status updated successfully!",
+            product
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};

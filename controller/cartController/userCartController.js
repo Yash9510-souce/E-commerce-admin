@@ -17,7 +17,7 @@ exports.addToCart = async (req,res,next) => {
         throw new Error("Only Authorized User")
     }
 
-    const cartproduct = user.cart.items.findIndex(cp => cp.product.toString() === product_id)
+    const cartproduct = user.cart.items.findIndex(cp => cp.productId.toString() === product_id)
 
     if (cartproduct >= 0) {
         if (quantity === 0) {
@@ -26,7 +26,7 @@ exports.addToCart = async (req,res,next) => {
           user.cart.items[cartproduct].quantity = quantity;
         }
       } else {
-          user.cart.items.push({ product: product_id, quantity:quantity })
+          user.cart.items.push({ productId: product_id, quantity:quantity })
       }
 
     await user.save()
@@ -47,15 +47,15 @@ exports.addToCart = async (req,res,next) => {
 exports.getCart = async (req, res, next) => {
     try {
 
-        const user = await User.findById(req.userId).populate('cart.items.product');
+        const user = await User.findById(req.userId).populate('cart.items.productId');
         if (!user) {
-            throw new Error("User Not Authorized!")
+            throw new Error("Only Authorized User!")
         }
 
         const cartcount =  user.cart.items.length;
 
         res.status(200).json({
-            message:"USER CART DATA SUCESSFULLY ",
+            message:"USER CART DATA FATCH SUCESSFULLY ",
             cart: user.cart,
             cart_items:cartcount
         });

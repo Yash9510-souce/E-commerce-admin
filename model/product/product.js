@@ -18,11 +18,17 @@ const PRODUCT_SCHEMA = new Schema({
         type: String,
         required: true
     },
+    status: {
+        type: String,
+        enum: ['on', 'off'],
+        default: "on",
+        required: true
+    },
     adminId:{
           type: Schema.Types.ObjectId,
           ref:"admin",
           required:true
-        }
+    }
 })
 
 module.exports = mongoose.model("product", PRODUCT_SCHEMA);
