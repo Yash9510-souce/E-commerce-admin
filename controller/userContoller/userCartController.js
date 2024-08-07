@@ -4,11 +4,8 @@ const User = require('../../model/user/user')
 exports.addToCart = async (req,res,next) => {
     try{
     const { product_id } = req.params
-    let { quantity } = req.body
+    let { quantity = 1 } = req.body
 
-    if (!quantity) {
-        throw new Error("Invalid Quantity!")
-    }
 
     const product = await Product.findById(product_id)
     if(!product){
@@ -20,13 +17,17 @@ exports.addToCart = async (req,res,next) => {
         throw new Error("Only Authorized User")
     }
 
-    const cartproduct = user.cart.findIndex(cp => cp.product.toString() === product_id)
-    if(cartproduct >= 0){
-        user.cart[cartproduct].quantity + 1;
-        console.log(user.cart[cartproduct].quantity += quantity)
-    } else {
-        user.cart.push({ product:product_id,quantity:quantity })
-    }
+    const cartproduct = user.cart.items.findIndex(cp => cp.product.toString() === product_id)
+
+    if (cartproduct >= 0) {
+        if (quantity === 0) {
+          user.cart.items.splice(cartproduct, 1);
+        } else {
+          user.cart.items[cartproduct].quantity = quantity;
+        }
+      } else {
+          user.cart.items.push({ product: product_id, quantity:quantity })
+      }
 
     await user.save()
 
@@ -35,25 +36,28 @@ exports.addToCart = async (req,res,next) => {
         cart:user.cart
     })
 
-   } catch(error) {
+    } catch(error) {
       res.status(404).json({
          message:error.message
       })
-   }
+    }
 }
 
 
 exports.getCart = async (req, res, next) => {
     try {
 
-        const user = await User.findById(req.userId).populate('cart.product');
+        const user = await User.findById(req.userId).populate('cart.items.product');
         if (!user) {
             throw new Error("User Not Authorized!")
         }
 
+        const cartcount =  user.cart.items.length;
+
         res.status(200).json({
             message:"USER CART DATA SUCESSFULLY ",
-            cart: user.cart
+            cart: user.cart,
+            cart_items:cartcount
         });
 
     } catch (error) {
@@ -77,20 +81,20 @@ exports.deleteCart = async (req, res, next) => {
             throw new Error("User not authorized !");
         }
 
-        const cartItemIndex = user.cart.findIndex(item => item._id.toString() === cart_id);
+        const cartItemIndex = user.cart.items.findIndex(item => item._id.toString() === cart_id);
 
         if (cartItemIndex === -1) {
             throw new Error("Cart item not found !");
         }
 
-        user.cart.splice(cartItemIndex, 1);
+        user.cart.items.splice(cartItemIndex, 1);
 
 
         await user.save();
 
         res.status(200).json({ 
-            message: 'Product removed from cart successfully', 
-            cart: user.cart 
+            message:'Product removed from cart successfully', 
+            cart: user.cart.items
         });
     } catch (error) {
         res.status(404).json({

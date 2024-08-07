@@ -10,6 +10,5 @@ router.post('/addTocart/:product_id',SECURE_CONTROLLER.USER_JWT,userCartControll
 router.delete('/delete-cart/:cart_id',SECURE_CONTROLLER.USER_JWT,userCartController.deleteCart)
 
 
-
 module.exports = router
 

@@ -27,7 +27,7 @@ exports.userSignup = async (req,res,next) => {
         const USER_REGISTER = await User.create({ 
             ...userData,
             password:hasspassword,
-            cart:[]
+            cart:{items:[]}
          })
 
         res.status(201).json({

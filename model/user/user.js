@@ -16,17 +16,21 @@ const userSchema = new Schema(
             type: String,
             required: true
         },
-        cart:[{
-            product: {
-                type: Schema.Types.ObjectId,
-                ref:'product',
-                required:true
-            },
-            quantity:{
-                type: Number,
-                required: true
-            }
-        }]
+        cart:{
+          items:[
+                {
+                  product: {
+                    type: Schema.Types.ObjectId,
+                    ref:'product',
+                    required:true
+                  },
+                  quantity:{
+                    type: Number,
+                    required: true
+                   }
+                }
+            ]
+        }
     },
     {
         timestamps: true
