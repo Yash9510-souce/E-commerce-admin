@@ -22,7 +22,7 @@ exports.adminSignup = async (req,res,next) => {
         }
 
         if (adminData.password != adminData.confirm_password) {
-            throw new Error("PASSWORD AND CONFIRM PASSWORD NOT Match ! !");
+            throw new Error("PASSWORD AND CONFIRM PASSWORD NOT Match !");
         }
 
         const hasspassword = await bcrypt.hash(adminData.password,12)
