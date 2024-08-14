@@ -60,15 +60,15 @@ exports.addProduct = async (req,res,next) => {
 
 exports.searchProducts = async (req, res, next) => {
     try {
-        const { keyword } = req.query;
+        const { productName } = req.query;
 
-        if (!keyword) {
-            throw new Error("Keyword is required")
+        if (!productName) {
+            throw new Error("productName is required")
         }
 
         // Perform a case-insensitive search using a regex
         const products = await Product.find({
-            productName: { $regex: keyword, $options: 'i' }
+            productName: { $regex: productName, $options: 'i' }
         });
 
         if (products.length === 0) {
