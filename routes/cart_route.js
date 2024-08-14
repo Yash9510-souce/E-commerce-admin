@@ -5,9 +5,9 @@ const userCartController = require('../controller/cartController/userCartControl
 const router = express.Router()
 
 //User Cart 
-router.get('/user-cart',SECURE_CONTROLLER.USER_JWT,userCartController.getCart)
-router.post('/addTocart/:product_id',SECURE_CONTROLLER.USER_JWT,userCartController.addToCart)
-router.delete('/delete-cart/:cart_id',SECURE_CONTROLLER.USER_JWT,userCartController.deleteCart)
+router.get('/cart/user-cart',SECURE_CONTROLLER.USER_JWT,userCartController.getCart)
+router.post('/cart/addTocart/:product_id',SECURE_CONTROLLER.USER_JWT,userCartController.addToCart)
+router.delete('/cart/delete-cart/:cart_id',SECURE_CONTROLLER.USER_JWT,userCartController.deleteCart)
 
 
 module.exports = router

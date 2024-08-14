@@ -14,12 +14,19 @@ const product = require('./routes/product_route')
 const cart = require('./routes/cart_route')
 const order = require('./routes/order_route')
 
-app.use(cros())
-app.use('/admin',product)
-app.use('/admin',admin)
-app.use('/user',user)
-app.use('/cart',cart)
-app.use('/order',order)
+const corsOptions = {
+    origin: '*',
+    methods: 'GET,POST,PUT,DELETE,PATCH',
+    allowedHeaders: 'Content-Type,Authorization',
+    credentials: true,
+};
+
+app.use(cros(corsOptions))
+app.use(product)
+app.use(admin)
+app.use(user)
+app.use(cart)
+app.use(order)
 
 mongoose.connect(process.env.DB_URL)
 .then(() => { 
