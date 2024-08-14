@@ -89,7 +89,7 @@ exports.adminLogin = async (req,res,next) => {
         ,process.env.JWT_SECRET_KEY_ADMIN,
         { expiresIn:'3h' })
 
-        res.status(201).json({
+        res.status(200).json({
             message: "ADMIN LOGIN SUCESSFULLY !",
             role:admin,
             Token:Token
