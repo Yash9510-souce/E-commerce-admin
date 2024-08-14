@@ -12,6 +12,7 @@ router.put('/admin/admin-update/:adminId',admincontroller.adminUpdate)
 
 //Admin DashBorad
 router.get('/admin/admin_dashboard',SECURE_CONTROLLER.ADMIN_JWT,adminDashbordController.getDashboard)
+router.get('/admin/user_data',SECURE_CONTROLLER.ADMIN_JWT,adminDashbordController.getUserdata)
 
 
 module.exports = router

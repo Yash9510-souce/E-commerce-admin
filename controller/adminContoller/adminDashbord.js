@@ -26,3 +26,21 @@ exports.getDashboard = async (req,res,next) => {
         })
     }
 }
+
+
+exports.getUserdata = async (req,res,next) => {
+    try {
+
+        const user = await User.find()
+        
+        res.status(200).json({
+            message: "USERDATA FATCH SUCESSFULLY !",
+            data:user,
+        })
+
+    } catch(error) {
+        res.status(404).json({
+            message:error.message
+        })
+    }
+}
