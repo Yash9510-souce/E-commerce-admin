@@ -35,7 +35,7 @@ router.put('/admin/product-update/:update_id',SECURE_CONTROLLER.ADMIN_JWT,upload
 router.delete('/admin/product-delete/:delete_id',SECURE_CONTROLLER.ADMIN_JWT,productcontroller.deleteProduct)
 
 //Admin Product serach and product are eneble or diseble
-router.get('/admin/serach',SECURE_CONTROLLER.ADMIN_JWT,productcontroller.searchProducts)
+router.get('/admin/serachProduct',SECURE_CONTROLLER.ADMIN_JWT,productcontroller.searchProducts)
 router.patch('/admin/product/:productId/status',SECURE_CONTROLLER.ADMIN_JWT, productcontroller.updateProductStatus);
 
 module.exports = router
