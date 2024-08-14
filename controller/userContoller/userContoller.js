@@ -1,6 +1,24 @@
 const bcrypt = require('bcryptjs')
 const User = require('../../model/user/user')
-const jwt = require('jsonwebtoken')
+const Product = require('../../model/product')
+const jwt = require('jsonwebtoken');
+
+exports.getProduct = async (req, res, next) => {
+    try {
+
+        const products = await Product.find({ status: 'on' })
+
+        res.status(200).json({
+            message: "PRODUCT FETCH SUCCESSFULLY!",
+            Product_Data: products
+        });
+
+    } catch (error) {
+        res.status(404).json({
+            message: error.message
+        });
+    }
+};
 
 exports.userSignup = async (req,res,next) => {
     try {

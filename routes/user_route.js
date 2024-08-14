@@ -4,6 +4,7 @@ const usercontroller = require('../controller/userContoller/userContoller')
 const router = express.Router()
 
 //User signupl , login , update , delete
+router.get('/products',usercontroller.getProduct)
 router.post('/user/signup',usercontroller.userSignup)
 router.post('/user/login',usercontroller.userLogin)
 router.put('/user/user-update/:update_id',usercontroller.userUpdate)
