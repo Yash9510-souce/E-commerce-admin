@@ -9,12 +9,12 @@ exports.addToCart = async (req,res,next) => {
 
     const product = await Product.findById(product_id)
     if(!product){
-        throw new Error("No Found Product")
+        throw new Error("Not Found Product")
     }
 
     const user = await User.findById(req.userId)
     if(!user){
-        throw new Error("Only Authorized User")
+        throw new Error("Without Login You Will Not Add Product In Cart")
     }
 
     const cartproduct = user.cart.items.findIndex(cp => cp.productId.toString() === product_id)
@@ -33,7 +33,7 @@ exports.addToCart = async (req,res,next) => {
 
     res.status(200).json({
         message:"ADD TO CART PRODUCT SUCESSFULLY!",
-        cart:user.cart
+        data:user.cart
     })
 
     } catch(error) {
@@ -54,10 +54,15 @@ exports.getCart = async (req, res, next) => {
 
         const cartcount =  user.cart.items.length;
 
+        const data = {
+            UserCart:user.cart,
+            CartCount:cartcount
+        }
+
         res.status(200).json({
             message:"USER CART DATA FATCH SUCESSFULLY ",
-            cart: user.cart,
-            cart_items:cartcount
+            data: data
+            
         });
 
     } catch (error) {
@@ -94,7 +99,7 @@ exports.deleteCart = async (req, res, next) => {
 
         res.status(200).json({ 
             message:'Product removed from cart successfully', 
-            cart: user.cart.items
+            data: user.cart.items
         });
     } catch (error) {
         res.status(404).json({

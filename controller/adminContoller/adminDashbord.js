@@ -9,11 +9,15 @@ exports.getDashboard = async (req,res,next) => {
         const product = await Product.find().countDocuments()
         const order = await Order.find().countDocuments()
 
+        const data = {
+            UserCount:user,
+            ProductCount:product,
+            OrderCount:order
+        }
+
         res.status(200).json({
-            message: "User Data FATCH SUCESSFULLY !",
-            userDataCount:user,
-            productCount:product,
-            orderCount:order
+            message: "DASHBOARD FATCH SUCESSFULLY !",
+            data:data,
         })
 
     } catch(error) {

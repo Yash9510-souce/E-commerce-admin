@@ -10,7 +10,7 @@ exports.getProduct = async (req, res, next) => {
 
         res.status(200).json({
             message: "PRODUCT FETCH SUCCESSFULLY!",
-            Product_Data: products
+            data: products
         });
 
     } catch (error) {
@@ -50,7 +50,7 @@ exports.userSignup = async (req,res,next) => {
 
         res.status(201).json({
             message: "USER REGISTRATION SUCESSFULLY !",
-            User:USER_REGISTER
+            data:USER_REGISTER
         })
 
     } catch(error) {
@@ -87,8 +87,8 @@ exports.userLogin = async (req,res,next) => {
 
         res.status(200).json({
             message: "USER LOGIN SUCESSFULLY !",
-            role:user,
-            Token:Token
+            data:user,
+            data:Token
         })
 
     } catch(error) {
@@ -101,10 +101,10 @@ exports.userLogin = async (req,res,next) => {
 
 exports.userUpdate = async (req,res,next) => {
     try {
-        const {update_id} = req.params
+        const {userId} = req.params
         const {userName,email,password} = req.body
 
-        let Find_User = await User.findById(update_id)
+        let Find_User = await User.findById(userId)
         if(!Find_User){
             throw new Error("User Not Found!")
         }
@@ -118,8 +118,8 @@ exports.userUpdate = async (req,res,next) => {
         let Update_User = await Find_User.save()
         
         res.status(200).json({
-            message: "USER UPDTAED SUCESSFULLY !",
-            UpdateUser:Update_User
+            message: "USER DETAIL UPDTAED SUCESSFULLY !",
+            data:Update_User
         })
 
     } catch(error) {
@@ -133,19 +133,19 @@ exports.userUpdate = async (req,res,next) => {
 
 exports.userDelete = async (req,res,next) => {
     try {
-        const {delete_id} = req.params
+        const {userId} = req.params
 
-        let Find_User = await User.findById(delete_id)
+        let Find_User = await User.findById(userId)
 
         if(!Find_User){
             throw new Error("Not Found User For Deletion!")
         }
 
-        let Delete_User = await User.findByIdAndDelete(delete_id)
+        let Delete_User = await User.findByIdAndDelete(userId)
         
         res.status(200).json({
             message: "USER DELETED SUCESSFULLY !",
-            delete_user:Delete_User
+            data:Delete_User
         })
 
     } catch(error) {

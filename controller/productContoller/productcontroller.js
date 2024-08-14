@@ -7,8 +7,8 @@ exports.getProduct = async (req, res, next) => {
         const products = await Product.find({ status: 'on' })
 
         res.status(200).json({
-            message: "PRODUCT FETCH SUCCESSFULLY!",
-            Product_Data: products
+            message: "PRODUCT DETAIL FETCH SUCCESSFULLY!",
+            data: products
         });
 
     } catch (error) {
@@ -20,11 +20,11 @@ exports.getProduct = async (req, res, next) => {
 
 exports.addProduct = async (req,res,next) => {
     try {
-        console.log('Received file:', req.file); 
-        console.log('Received body:', req.body); 
 
         if (!req.file) {
-            return res.status(400).json({ message: 'Select the File' });
+            return res.status(400).json({ 
+                message: 'Select The File' 
+            });
         }
 
         const productData = req.body;
@@ -37,7 +37,6 @@ exports.addProduct = async (req,res,next) => {
         }
 
         const imageUrl = req.file.filename
-        console.log(imageUrl)
 
         const product = await Product.create({
             ...productData,
@@ -47,7 +46,7 @@ exports.addProduct = async (req,res,next) => {
         
         res.status(201).json({
             message: "PRODUCT ADD SUCESSFULLY !",
-            productData:product
+            data:product
         })
 
     } catch (error) {
@@ -63,10 +62,9 @@ exports.searchProducts = async (req, res, next) => {
         const { productName } = req.query;
 
         if (!productName) {
-            throw new Error("productName is required")
+            throw new Error("productName Is Required")
         }
 
-        // Perform a case-insensitive search using a regex
         const products = await Product.find({
             productName: { $regex: productName, $options: 'i' }
         });
@@ -77,7 +75,7 @@ exports.searchProducts = async (req, res, next) => {
 
         res.status(200).json({
             message:"PRODUCT SEARCH SUCESSFULLY!",
-            serach_pro:products
+            data:products
         });
 
     } catch (error) {
@@ -90,28 +88,29 @@ exports.searchProducts = async (req, res, next) => {
 
 exports.updateProduct = async(req,res,next) => {
     try {
-        const {update_id} = req.params
+        const {productId} = req.params
         let {productName, productPrice, productDescription} = req.body
         
-        const updateProduct = await Product.findById(update_id)
+        const updateProduct = await Product.findById(productId)
         if(!updateProduct){
             throw new Error('Product Not Found!')
         }
 
         if(updateProduct.adminId.toString() !== req.adminId){
-            throw new Error('You are not Modifiyng this Product!')
+            throw new Error('Only Admin Who Created A Product Can Modify It!')
         }
 
         let productImage = req.body.productImage;
 
         if (req.file) {
             productImage = req.file.filename;
-            console.log(`New file uploaded: ${productImage}`);
             let oldImagePath = updateProduct.productImage
             filehelper.clearpath(oldImagePath)
             
         } else {
-            console.log(`No new file uploaded, keeping existing image: ${productImage}`);
+             res.status(400).json({ 
+                message: 'Select The File' 
+            });
         }
         
         updateProduct.productName = productName
@@ -123,8 +122,8 @@ exports.updateProduct = async(req,res,next) => {
         let Update_Product = await updateProduct.save()
         
         res.status(200).json({
-            message: "PRODUCT UPDTAED SUCESSFULLY !",
-            UpdateProduct:Update_Product
+            message: "PRODUCT DETAIL UPDTAED SUCESSFULLY !",
+            data:Update_Product
         })
 
     } catch(error) {
@@ -137,26 +136,26 @@ exports.updateProduct = async(req,res,next) => {
 
 exports.deleteProduct = async (req,res,next) => {
     try {
-        const {delete_id} = req.params
+        const {productId} = req.params
 
-        let Find_Product = await Product.findById(delete_id)
+        let Find_Product = await Product.findById(productId)
 
         if(!Find_Product){
             throw new Error("Product Not found!")
         }
 
         if(Find_Product.adminId.toString() !== req.adminId){
-            throw new Error('You are not Remove this Product!')
+            throw new Error('Only Admin Who Created A Product Can Remove It!')
         }
 
         let oldImagePath = Find_Product.productImage
         filehelper.clearpath(oldImagePath)
 
-        let Delete_Product = await Product.findByIdAndDelete(delete_id)
+        let Delete_Product = await Product.findByIdAndDelete(productId)
         
         res.status(200).json({
-            message: "USER DELETED SUCESSFULLY !",
-            delete_product:Delete_Product
+            message: "PRODUCT DELETED SUCESSFULLY !",
+            data:Delete_Product
         })
 
     } catch(error) {
@@ -189,8 +188,8 @@ exports.updateProductStatus = async (req, res, next) => {
         await product.save();
 
         res.status(200).json({
-            message: "Product status updated successfully!",
-            product
+            message: "PRODUCT STATUS UPDATED SUCCESSFULLY !",
+            data:product
         });
 
     } catch (error) {

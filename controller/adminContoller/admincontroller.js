@@ -1,7 +1,5 @@
 const bcrypt = require('bcryptjs')
 const Admin = require('../../model/admin/admin')
-const User = require('../../model/user/user')
-const Product = require('../../model/product/product')
 const jwt = require('jsonwebtoken')
 
 
@@ -18,11 +16,11 @@ exports.adminSignup = async (req,res,next) => {
 
         const Aladmin = await Admin.findOne({email:adminData.email})
         if(Aladmin){
-            throw new Error("This Admin Email Are Existing !")
+            throw new Error("This Admin Email Are Existing ! Try Diffrent One")
         }
 
         if (adminData.password != adminData.confirm_password) {
-            throw new Error("PASSWORD AND CONFIRM PASSWORD NOT Match !");
+            throw new Error("PASSWORD AND CONFIRM PASSWORD NOT MATCH !");
         }
 
         const hasspassword = await bcrypt.hash(adminData.password,12)
@@ -34,7 +32,7 @@ exports.adminSignup = async (req,res,next) => {
 
         res.status(201).json({
             message: "ADMIN REGISTRATION SUCESSFULLY !",
-            admin:ADMIN_REGISTER
+            data:ADMIN_REGISTER
         })
 
     } catch(error) {
@@ -72,7 +70,7 @@ exports.adminLogin = async (req,res,next) => {
 
         res.status(200).json({
             message: "ADMIN LOGIN SUCESSFULLY !",
-            role:admin,
+            data:admin,
             Token:Token
         })
 
@@ -86,10 +84,10 @@ exports.adminLogin = async (req,res,next) => {
 
 exports.adminUpdate = async (req,res,next) => {
     try {
-        const {update_id} = req.params
+        const {adminId} = req.params
         const {email,password} = req.body
 
-        let Find_Admin = await Admin.findById(update_id)
+        let Find_Admin = await Admin.findById(adminId)
         if(!Find_Admin){
             throw new Error("Admin Not Found!")
         }
@@ -106,7 +104,7 @@ exports.adminUpdate = async (req,res,next) => {
         
         res.status(200).json({
             message: "ADMIN PASSWORD UPDTAED SUCESSFULLY !",
-            UpdateAdmin:Update_Admin
+            data:Update_Admin
         })
 
     } catch(error) {

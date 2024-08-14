@@ -23,6 +23,10 @@ const userSchema = new Schema(
             country:String,
             postal_code: Number
         },
+        role:{
+            type:String,
+            default:"Admin"
+        },
         cart:{
           items:[
                 {

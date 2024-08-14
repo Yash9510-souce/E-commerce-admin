@@ -31,8 +31,8 @@ const upload = multer({ storage:storage,fileFilter:fileFilter })
 //Admin Product
 router.get('/admin/product',SECURE_CONTROLLER.ADMIN_JWT,productcontroller.getProduct)
 router.post('/admin/add-product',SECURE_CONTROLLER.ADMIN_JWT,upload.single("productImage"),productcontroller.addProduct)
-router.put('/admin/product-update/:update_id',SECURE_CONTROLLER.ADMIN_JWT,upload.single("productImage"),productcontroller.updateProduct)
-router.delete('/admin/product-delete/:delete_id',SECURE_CONTROLLER.ADMIN_JWT,productcontroller.deleteProduct)
+router.put('/admin/product-update/:productId',SECURE_CONTROLLER.ADMIN_JWT,upload.single("productImage"),productcontroller.updateProduct)
+router.delete('/admin/product-delete/:productId',SECURE_CONTROLLER.ADMIN_JWT,productcontroller.deleteProduct)
 
 //Admin Product serach and product are eneble or diseble
 router.get('/admin/serachProduct',SECURE_CONTROLLER.ADMIN_JWT,productcontroller.searchProducts)

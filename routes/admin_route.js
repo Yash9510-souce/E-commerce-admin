@@ -8,7 +8,7 @@ const router = express.Router()
 //Admin signup and login and update password only
 router.post('/admin/signup',admincontroller.adminSignup)
 router.post('/admin/login',admincontroller.adminLogin)
-router.put('/admin/admin-update/:update_id',admincontroller.adminUpdate)
+router.put('/admin/admin-update/:adminId',admincontroller.adminUpdate)
 
 //Admin DashBorad
 router.get('/admin/admin_dashboard',SECURE_CONTROLLER.ADMIN_JWT,adminDashbordController.getDashboard)
