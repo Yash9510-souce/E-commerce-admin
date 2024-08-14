@@ -4,25 +4,6 @@ const User = require('../../model/user/user')
 const Product = require('../../model/product/product')
 const jwt = require('jsonwebtoken')
 
-exports.getDashboard = async (req,res,next) => {
-    try {
-
-        const user = await User.find()
-        const product = await Product.find().countDocuments()
-        console.log(product)
-
-        res.status(200).json({
-            message: "User Data FATCH SUCESSFULLY !",
-            User_Data:user,
-            productCount:product
-        })
-
-    } catch(error) {
-        res.status(404).json({
-            message:error.message
-        })
-    }
-}
 
 exports.adminSignup = async (req,res,next) => {
     try {
