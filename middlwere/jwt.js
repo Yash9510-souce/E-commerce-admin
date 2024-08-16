@@ -6,11 +6,13 @@ exports.ADMIN_JWT = async (req, res, next) => {
 
     try {
 
-        let TOKEN = req.headers.authorization.split(' ')[1];
+        let authHeader = req.headers.authorization;
 
-        if (!TOKEN) {
-            throw new Error("PLESE ATTACH THE TOKEN FIRST !")
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new Error('Please attach the token first!');
         }
+
+        let TOKEN = authHeader.split(' ')[1];
 
         let CHECK_VALID_TOKEN = jwt.verify(TOKEN, process.env.JWT_SECRET_KEY_ADMIN);
 
@@ -21,7 +23,6 @@ exports.ADMIN_JWT = async (req, res, next) => {
         }
 
         req.adminId = CHECK_VALID_TOKEN.adminId
-        // console.log(req.adminId)
 
         next();
     } catch (error) {
@@ -36,11 +37,13 @@ exports.ADMIN_JWT = async (req, res, next) => {
 
 exports.USER_JWT = async (req, res, next) => {
     try {
-        let TOKEN = req.headers.authorization.split(' ')[1];
+        let authHeader = req.headers.authorization;
 
-        if (!TOKEN) {
-            throw new Error("PLESE ATTACH THE TOKEN FIRST !")
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new Error('Please attach the token first!');
         }
+
+        let TOKEN = authHeader.split(' ')[1];
 
         let CHECK_VALID_TOKEN = jwt.verify(TOKEN, process.env.JWT_SECRET_KEY_USER);
 
