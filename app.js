@@ -28,6 +28,10 @@ app.use(user)
 app.use(cart)
 app.use(order)
 
+app.use('/hello',(req,res,next) => {
+    console.log('hello')
+})
+
 mongoose.connect(process.env.DB_URL)
 .then(() => { 
     console.log("DataBase Connected!")
