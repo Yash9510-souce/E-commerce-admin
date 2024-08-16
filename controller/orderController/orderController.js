@@ -152,8 +152,8 @@ exports.generateInvoice = async(req, res, next) => {
           .text(`Deals Pvt Ltd`, 50, 150)
           .text(`Contact: +91 90990-88451`, 50, 165)
           .text(`VAT: 24AAACC1206D1ZM`, 50, 180)
-          .text(`Address: 100, Sunday Hub ,`, 50, 195)
-          .text(`1th Floor Vesu Surat 395011`, 50, 210)
+          .text(`Address: 100, Sunday Hub , Vesu`, 50, 195)
+          .text(`Surat , Gujarat 395011`, 50, 210)
           .text(`Surat 395011`, 50, 210)
 
         doc
