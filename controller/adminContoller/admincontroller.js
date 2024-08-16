@@ -16,11 +16,11 @@ exports.adminSignup = async (req,res,next) => {
 
         const Aladmin = await Admin.findOne({email:adminData.email})
         if(Aladmin){
-            throw new Error("This admin email are existing ! try diffrent one")
+            throw new Error("This email are existing!")
         }
 
         if (adminData.password != adminData.confirm_password) {
-            throw new Error("Password and confirm password not match!");
+            throw new Error("Password's not match!");
         }
 
         const hasspassword = await bcrypt.hash(adminData.password,12)
@@ -31,7 +31,7 @@ exports.adminSignup = async (req,res,next) => {
          })
 
         res.status(201).json({
-            message: "Admin registration sucessfully !",
+            message: "Admin registration sucessfully!",
             data:ADMIN_REGISTER
         })
 
@@ -49,7 +49,7 @@ exports.adminLogin = async (req,res,next) => {
         const {email,password} = req.body
 
         if(!email || !password){
-            throw new Error("Plese enter all the fields !");
+            throw new Error("Plese enter all the fields!");
         }
 
         const admin = await Admin.findOne({email:email})
@@ -93,7 +93,7 @@ exports.adminUpdate = async (req,res,next) => {
         }
 
         if(Find_Admin.email !== email){
-            throw new Error("Admin e-mail not match for reset password!")
+            throw new Error("Admin e-mail not match!")
         }
 
         const hasspassword = await bcrypt.hash(password,12)

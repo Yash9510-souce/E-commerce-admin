@@ -25,7 +25,7 @@ const userSchema = new Schema(
         },
         role:{
             type:String,
-            default:"Admin"
+            default:"User"
         },
         cart:{
           items:[

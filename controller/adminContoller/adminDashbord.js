@@ -5,14 +5,27 @@ const Order = require('../../model/order/order')
 exports.getDashboard = async (req,res,next) => {
     try {
 
-        const user = await User.find().countDocuments()
-        const product = await Product.find().countDocuments()
-        const order = await Order.find().countDocuments()
+        const userCount = await User.find().countDocuments()
+        const productCount = await Product.find().countDocuments()
+        const orders = await Order.find()
+     
+        let totalProfit = 0;
+
+        orders.forEach(order => {
+            let orderProfit = 0;
+            order.products.forEach(item => {
+                orderProfit += item.product.productPrice * item.quantity * 0.10;
+            });
+            totalProfit += orderProfit;
+        });
+
+        console.log(totalProfit)
 
         const data = [{
-            UserCount:user,
-            ProductCount:product,
-            OrderCount:order
+            userCount: userCount,
+            productCount: productCount,
+            orderCount: orders.length,
+            totalProfit:totalProfit
         }]
 
         res.status(200).json({

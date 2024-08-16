@@ -9,7 +9,7 @@ exports.getProduct = async (req, res, next) => {
         const products = await Product.find({ status: 'on' })
 
         res.status(200).json({
-            message: "PRODUCT FETCH SUCCESSFULLY!",
+            message: "Product fatch successfully!",
             data: products
         });
 
@@ -33,11 +33,11 @@ exports.userSignup = async (req,res,next) => {
 
         const AlUser = await User.findOne({ email:userData.email })
         if(AlUser){
-            throw new Error("This User Email Are Existing !")
+            throw new Error("This email are existing!")
         }
 
         if (userData.password != userData.confirm_password) {
-            throw new Error("PASSWORD AND CONFIRM PASSWORD NOT Match !");
+            throw new Error("Password's not match!");
         }
 
         const hasspassword = await bcrypt.hash(userData.password,12)
@@ -49,7 +49,7 @@ exports.userSignup = async (req,res,next) => {
          })
 
         res.status(201).json({
-            message: "USER REGISTRATION SUCESSFULLY !",
+            message: "User registration sucessfully!",
             data:USER_REGISTER
         })
 
@@ -66,17 +66,17 @@ exports.userLogin = async (req,res,next) => {
         const { email,password } = req.body
 
         if(!email || !password){
-            throw new Error("PLESE ENTER ALL THE FIELDS !");
+            throw new Error("Plese enter all the fields!");
         }
 
         const user = await User.findOne({ email:email })
         if(!user){
-            throw new Error("User Not Found!")
+            throw new Error("User not found!")
         }
 
         const doMatch = await bcrypt.compare(password,user.password)
         if(!doMatch){
-            throw new Error("Email and Password dose not Match!")
+            throw new Error("Email and password dose not match!")
         }
 
         const Token = jwt.sign({
@@ -86,9 +86,9 @@ exports.userLogin = async (req,res,next) => {
         { expiresIn: '3h' })
 
         res.status(200).json({
-            message: "USER LOGIN SUCESSFULLY !",
+            message: "USER login sucessfully !",
             data:user,
-            data:Token
+            Token:Token
         })
 
     } catch(error) {
@@ -106,7 +106,7 @@ exports.userUpdate = async (req,res,next) => {
 
         let Find_User = await User.findById(userId)
         if(!Find_User){
-            throw new Error("User Not Found!")
+            throw new Error("User not found!")
         }
 
         const hasspassword = await bcrypt.hash(password,12)
@@ -118,7 +118,7 @@ exports.userUpdate = async (req,res,next) => {
         let Update_User = await Find_User.save()
         
         res.status(200).json({
-            message: "USER DETAIL UPDTAED SUCESSFULLY !",
+            message: "User updated sucessfully!",
             data:Update_User
         })
 
@@ -138,13 +138,13 @@ exports.userDelete = async (req,res,next) => {
         let Find_User = await User.findById(userId)
 
         if(!Find_User){
-            throw new Error("Not Found User For Deletion!")
+            throw new Error("User not found!")
         }
 
         let Delete_User = await User.findByIdAndDelete(userId)
         
         res.status(200).json({
-            message: "USER DELETED SUCESSFULLY !",
+            message: "User delete sucessfully!",
             data:Delete_User
         })
 

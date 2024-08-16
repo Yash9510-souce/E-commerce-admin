@@ -7,7 +7,7 @@ exports.getProduct = async (req, res, next) => {
         const products = await Product.find({ status: 'on' })
 
         res.status(200).json({
-            message: "PRODUCT DETAIL FETCH SUCCESSFULLY!",
+            message: "Product detail fetch successfully!",
             data: products
         });
 
@@ -45,7 +45,7 @@ exports.addProduct = async (req,res,next) => {
         })
         
         res.status(201).json({
-            message: "PRODUCT ADD SUCESSFULLY !",
+            message: "Product add successfully!",
             data:product
         })
 
@@ -62,7 +62,7 @@ exports.searchProducts = async (req, res, next) => {
         const { productName } = req.query;
 
         if (!productName) {
-            throw new Error("productName Is Required")
+            throw new Error("Product name required!")
         }
 
         const products = await Product.find({
@@ -70,11 +70,10 @@ exports.searchProducts = async (req, res, next) => {
         });
 
         if (products.length === 0) {
-            throw new Error("No products found")
+            throw new Error("Products not found!")
         }
 
         res.status(200).json({
-            message:"PRODUCT SEARCH SUCESSFULLY!",
             data:products
         });
 
@@ -93,11 +92,11 @@ exports.updateProduct = async(req,res,next) => {
         
         const updateProduct = await Product.findById(productId)
         if(!updateProduct){
-            throw new Error('Product Not Found!')
+            throw new Error('Product not found!')
         }
 
         if(updateProduct.adminId.toString() !== req.adminId){
-            throw new Error('Only Admin Who Created A Product Can Modify It!')
+            throw new Error('Only authorized!')
         }
 
         let productImage = req.body.productImage;
@@ -109,7 +108,7 @@ exports.updateProduct = async(req,res,next) => {
             
         } else {
              res.status(400).json({ 
-                message: 'Select The File' 
+                message: 'Select the file' 
             });
         }
         
@@ -122,7 +121,7 @@ exports.updateProduct = async(req,res,next) => {
         let Update_Product = await updateProduct.save()
         
         res.status(200).json({
-            message: "PRODUCT DETAIL UPDTAED SUCESSFULLY !",
+            message: "Product update sucessfully!",
             data:Update_Product
         })
 
@@ -141,11 +140,11 @@ exports.deleteProduct = async (req,res,next) => {
         let Find_Product = await Product.findById(productId)
 
         if(!Find_Product){
-            throw new Error("Product Not found!")
+            throw new Error("Product not found!")
         }
 
         if(Find_Product.adminId.toString() !== req.adminId){
-            throw new Error('Only Admin Who Created A Product Can Remove It!')
+            throw new Error('Only authorized!')
         }
 
         let oldImagePath = Find_Product.productImage
@@ -154,7 +153,7 @@ exports.deleteProduct = async (req,res,next) => {
         let Delete_Product = await Product.findByIdAndDelete(productId)
         
         res.status(200).json({
-            message: "PRODUCT DELETED SUCESSFULLY !",
+            message: "Product delete sucessfully!",
             data:Delete_Product
         })
 
@@ -174,7 +173,7 @@ exports.updateProductStatus = async (req, res, next) => {
         // Validate the status
         if (!status || !['on', 'off'].includes(status)) {
             return res.status(400).json({
-                message: "Invalid status value. It must be either 'on' or 'off'."
+                message: "Invalid status value only [on/off]."
             });
         }
 
@@ -188,7 +187,7 @@ exports.updateProductStatus = async (req, res, next) => {
         await product.save();
 
         res.status(200).json({
-            message: "PRODUCT STATUS UPDATED SUCCESSFULLY !",
+            message: "Product status update sucessfully!",
             data:product
         });
 

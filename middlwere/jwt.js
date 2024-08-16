@@ -19,7 +19,7 @@ exports.ADMIN_JWT = async (req, res, next) => {
         let CHECK_VALID_ADMIN = await ADMIN.findById({ _id:CHECK_VALID_TOKEN.adminId});
 
         if (!CHECK_VALID_ADMIN) {
-            throw new Error("INVALID TOKEN OR INVALID ADMIN FOR THIIS TOKEN !");
+            throw new Error("Invalid token OR invalid admin!");
         }
 
         req.adminId = CHECK_VALID_TOKEN.adminId
@@ -50,7 +50,7 @@ exports.USER_JWT = async (req, res, next) => {
         let CHECK_VALID_USER = await USER.findById({ _id: CHECK_VALID_TOKEN.userId });
 
         if (!CHECK_VALID_USER) {
-            throw new Error("INVALID TOKEN OR INVALID USER FOR THIIS TOKEN !");
+            throw new Error("Invalid token OR invalid user!");
         }
 
         req.userId = CHECK_VALID_TOKEN.userId
