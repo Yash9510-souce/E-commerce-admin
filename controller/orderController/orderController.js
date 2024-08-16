@@ -8,7 +8,7 @@ exports.postCartOrder = async (req,res,next) => {
 
         const user = await User.findById(req.userId).populate('cart.items.productId');
         if (!user) {
-            throw new Error("Without Login You Will Not Order Products")
+            throw new Error("Login first!")
         }
 
         const product = user.cart.items.map(i => {
@@ -30,12 +30,12 @@ exports.postCartOrder = async (req,res,next) => {
            await user.save()
 
            res.status(200).json({
-            message:"ORDER PLACED SUCESSFULLY !",
-            data:order
+            message:"Order placed sucessfully!",
+            data:ordersave
            })
 
         } else {
-            throw new Error("Failed To place Order")
+            throw new Error("Failed to place order")
         }
 
     } catch (error) {
@@ -50,10 +50,9 @@ exports.getOrder = async(req,res,next) => {
     try{
 
         const order = await Order.find({'user.userId':req.userId})
-        console.log(order)
 
         res.status(200).json({
-            message:"ORDER DATA FATECH SUCESSFULLY",
+            message:"Order data fatch sucessfully!",
             data:order
         })
 
@@ -73,13 +72,13 @@ exports.deleteOrder = async (req,res,next) => {
         let order = await Order.findById(orderId)
 
         if(!order){
-            throw new Error("Order Not Found!")
+            throw new Error("Order not found!")
         }
 
         let Order_Product = await Order.findByIdAndDelete(orderId)
         
         res.status(200).json({
-            message: "ORDER DELETED SUCESSFULLY !",
+            message: "Order deleted sucessfully!",
             data:Order_Product
         })
 
@@ -101,7 +100,7 @@ exports.getinvoice = async(req,res,next) => {
 
         const user = await User.findById(req.userId)
         if(!user){
-            throw new Error("Without Login You Will Not Download Invoice")
+            throw new Error("Login first!")
         }
 
         let date = new Date()
@@ -164,7 +163,7 @@ exports.getinvoice = async(req,res,next) => {
         niceInvoice(invoiceDetail, invoicefolder);
 
         res.status(200).json({
-            message:"Invoice Create"
+            message:"Invoice create"
         })
     } catch(error) {
         res.status(404).json({

@@ -9,14 +9,14 @@ exports.getDashboard = async (req,res,next) => {
         const product = await Product.find().countDocuments()
         const order = await Order.find().countDocuments()
 
-        const data = {
+        const data = [{
             UserCount:user,
             ProductCount:product,
             OrderCount:order
-        }
+        }]
 
         res.status(200).json({
-            message: "Dashboard Fatch Sucessfully !",
+            message: "Dashboard fatch sucessfully !",
             data:data,
         })
 
@@ -34,7 +34,7 @@ exports.getUserdata = async (req,res,next) => {
         const user = await User.find()
         
         res.status(200).json({
-            message: "USERDATA FATCH SUCESSFULLY !",
+            message: "Userdata fatch sucessfully !",
             data:user,
         })
 

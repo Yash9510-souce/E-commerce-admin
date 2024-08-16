@@ -9,12 +9,12 @@ exports.addToCart = async (req,res,next) => {
 
     const product = await Product.findById(product_id)
     if(!product){
-        throw new Error("Not Found Product")
+        throw new Error("Product not found!")
     }
 
     const user = await User.findById(req.userId)
     if(!user){
-        throw new Error("Without Login You Will Not Add Product In Cart")
+        throw new Error("Login first")
     }
 
     const cartproduct = user.cart.items.findIndex(cp => cp.productId.toString() === product_id)
@@ -32,7 +32,7 @@ exports.addToCart = async (req,res,next) => {
     await user.save()
 
     res.status(200).json({
-        message:"ADD TO CART PRODUCT SUCESSFULLY!",
+        message:"Add to cart sucessfully!",
         data:user.cart
     })
 
@@ -49,7 +49,7 @@ exports.getCart = async (req, res, next) => {
 
         const user = await User.findById(req.userId).populate('cart.items.productId');
         if (!user) {
-            throw new Error("Only Authorized User!")
+            throw new Error("Login first!")
         }
 
         const cartcount =  user.cart.items.length;
@@ -60,9 +60,8 @@ exports.getCart = async (req, res, next) => {
         }
 
         res.status(200).json({
-            message:"USER CART DATA FATCH SUCESSFULLY ",
+            message:"Fatch cart data sucessfully!",
             data: data
-            
         });
 
     } catch (error) {
@@ -78,18 +77,18 @@ exports.deleteCart = async (req, res, next) => {
         const { cart_id } = req.params;
 
         if (!cart_id) {
-            throw new Error("Cart Id Is Required !");
+            throw new Error("Cart id required!");
         }
 
         const user = await User.findById(req.userId);
         if (!user) {
-            throw new Error("User not authorized !");
+            throw new Error("Login first!");
         }
 
         const cartItemIndex = user.cart.items.findIndex(item => item._id.toString() === cart_id);
 
         if (cartItemIndex === -1) {
-            throw new Error("Cart item not found !");
+            throw new Error("Cart item not found!");
         }
 
         user.cart.items.splice(cartItemIndex, 1);
