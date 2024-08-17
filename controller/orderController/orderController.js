@@ -96,18 +96,28 @@ exports.deleteOrder = async (req,res,next) => {
 exports.generateInvoice = async(req, res, next) => {
     try {
         const orderId = req.params.orderId;
-        const order = await Order.findById(orderId);
-        const user = await User.findById(req.userId);
+        const order = await Order.findById(orderId)
+        const user = await User.findById(order.user.userId);
+        console.log(user)
 
         if (!user) {
             throw new Error("Login first!");
         }
 
         let date = new Date();
+
         let currentmonth = date.getMonth() + 1;
         let dueyear = date.getFullYear() + 1
         let currentdate = date.getDate().toString().padStart(2, '0') + '-' + currentmonth.toString().padStart(2, '0') + '-' + date.getFullYear();
         let validitidate =  date.getDate().toString().padStart(2, '0') + '-'  + currentmonth.toString().padStart(2, '0') + '-' + dueyear
+
+
+        const InvoiceName = 'Invoice-' + orderId + '.pdf';
+        const invoicefolder = path.join(__dirname, '..', '..', 'Customer_Invoice');
+
+        if (!fs.existsSync(invoicefolder)) {
+            fs.mkdirSync(invoicefolder, { recursive: true });
+        }
 
         let subtotal = 0;
         order.products.forEach(product => {
@@ -117,13 +127,6 @@ exports.generateInvoice = async(req, res, next) => {
         const taxRate = 0.20; 
         const tax = subtotal * taxRate;
         const total = subtotal + tax;
-
-        const InvoiceName = 'Invoice-' + user.userName + '-' + orderId + '.pdf';
-        const invoicefolder = path.join(__dirname, '..', '..', 'Customer_Invoice');
-
-        if (!fs.existsSync(invoicefolder)) {
-            fs.mkdirSync(invoicefolder, { recursive: true });
-        }
 
         const invoicePath = path.join(invoicefolder, InvoiceName);
 
@@ -145,65 +148,127 @@ exports.generateInvoice = async(req, res, next) => {
         doc
           .fontSize(10)
           .text(`Invoice No: ${orderId}`, { align: 'right' },50, 57)
-          .text(`Date: ${currentdate}`, { align: 'right' },75, 57)
-          .text(`Due: ${validitidate}`, { align: 'right' },90, 57)
+          .text(`Billing Date: ${currentdate}`, { align: 'right' },75, 57)
+          .text(`Due Date: ${validitidate} `, { align: 'right' },90, 57)
+
 
         doc
+         .rect(0, 130, 720, 100)  
+         .fillColor('#F1F6F9')  
+         .fill();
+
+        doc
+          .fillColor('black')
           .text(`Deals Pvt Ltd`, 50, 150)
-          .text(`Contact: +91 90990-88451`, 50, 165)
-          .text(`VAT: 24AAACC1206D1ZM`, 50, 180)
-          .text(`Address: 100, Sunday Hub , Vesu`, 50, 195)
-          .text(`Surat , Gujarat 395011`, 50, 210)
-          .text(`Surat 395011`, 50, 210)
+          .text(`Contact: +91 90990 88451`, 50, 165)
+          .text(`VAT:  24AAACC1206D1ZM`, 50, 180)
+          .text(`Address:  100, Sunday Hub , Vesu`, 50, 195)
+          .text(`Surat , Gujarat , India - 395011`, 50, 210)
 
         doc
-          .text(`Customer: ${user.userName}`, 380, 150)
-          .text(`E-Mail: ${user.email}`, 380, 165)
-          .text(`Address: ${user.address.address}`, 380, 180)
-          .text(`${user.address.city}, ${user.address.state}`, 380, 195)
-          .text(`${user.address.country} - ${user.address.postal_code}`, 380, 210)
+          .fillColor('black')
+          .lineGap(2)
+          .text(`Customer:  ${user.userName}`, 380, 150)
+          .text(`E-Mail:  ${order.user.email}`, 380, 165)
+          .text(`Address: ${user.address.address} , ${user.address.city} , ${user.address.state} , ${user.address.country} - ${user.address.postal_code}`, 380, 180,)
           .moveDown();
-      
-        doc
-          .moveDown()
-          .text('Product details', 50, 250)
-          .text('Price', 200, 250)
-          .text('Qty.', 250, 250)
-          .text('VAT', 300, 250)
-          .text('Subtotal', 350, 250)
-          .text('Subtotal + VAT', 400, 250);
 
-        let position = 270;
+
+        doc
+          .fontSize(10)
+          .fillColor('#6A50FF')
+          .moveDown()
+          .text('No',50,250)
+          .text('Product details', 75, 250)
+          .text('Unit-Price', 225, 250)
+          .text('Qty',285, 250)
+          .text('Net Amount',320, 250)
+          .text('VAT', 385, 250)
+          .text('VAT Amount', 420, 250)
+          .text('Total Amount', 485, 250)
+
+        doc
+          .moveTo(50, 265)
+          .lineTo(550, 265) 
+          .strokeColor('#6A50FF') 
+          .lineWidth(1) 
+          .stroke();
+
+        doc
+          .fontSize(10)
+          .fillColor('black');
+
+        let position = 275;
+
+    
 
         order.products.map((item, index) => {
-            doc.text(`${index + 1}. ${item.product.productName}`, 50, position)
-               .text(`₹${item.product.productPrice}`, 200, position)  // Corrected 'price' to 'productPrice'
-               .text(`${item.quantity}`, 250, position)
-               .text(`20%`, 300, position)
-               .text(`₹${item.product.productPrice * item.quantity}`, 350, position)  // Corrected to show actual subtotal
-               .text(`₹${(item.product.productPrice * item.quantity) * (1 + taxRate)}`, 400, position); // Corrected to include VAT
-            position += 20;
+
+            const itemTotal = item.product.productPrice * item.quantity;
+            const itemVAT = itemTotal * 0.20; 
+
+            doc.text(`${index + 1}`, 55, position)
+               .text(`${item.product.productName}`, 75, position)
+               .text(`$${item.product.productPrice}`, 230, position) 
+               .text(`${item.quantity}`, 290, position)
+               .text(`$${itemTotal}`, 325, position) 
+               .text(`20%`, 385, position) 
+               .text(`$${itemVAT}`, 430, position) 
+               .text(`$${itemTotal + itemVAT}`, 495, position) 
+            
+            doc
+              .moveTo(50, position + 15) 
+              .lineTo(550, position + 15)  
+              .strokeColor('#D3D3D3')      
+              .lineWidth(0.5)              
+              .stroke();
+              
+            position += 25;
         });
 
-        doc
-          .text(`Net Total:`, 350, position + 20)
-          .text(`₹${subtotal}`, 400, position + 20);
 
         doc
-          .text(`VAT Total:`, 350, position + 40)
-          .text(`₹${tax}`, 400, position + 40);
+          .text(`NET Total: ${subtotal}`, 450, position + 0)
+
+          doc
+            .moveTo(450, position + 15) 
+            .lineTo(550, position + 15)  
+            .strokeColor('#D3D3D3')      
+            .lineWidth(0.5)              
+            .stroke();
+ 
+
+        doc
+          .text(`VAT Total: ${tax}`, 450, position + 25)
+
+        doc
+            .moveTo(450, position + 40) 
+            .lineTo(550, position + 40)  
+            .strokeColor('#D3D3D3')      
+            .lineWidth(0.5)              
+            .stroke();
+
+
+        doc
+          .rect(450, 400, 100, 30) 
+          .fillColor('#8576FF')  
+          .fill();
 
         doc
           .fontSize(14)
-          .text(`Total:`, 350, position + 60)
-          .text(`₹${total}`, 400, position + 60);
+          .fillColor('white')
+          .text(`Total:${total} `, 460, position + 60)
 
         doc
+          .fontSize(10)
+          .fillColor('black')
           .moveDown()
-          .text('Notes', 50, position + 100)
-          .text('Save This Invoice Without Invoice Your Product not exchange and not return', 50, position + 115);
+          .text('Notes : Save This Invoice Without Invoice Your Product not exchange and not return', 50, position + 400,{
+            align:'center'
+          })
 
         doc.end();
+
 
     } catch(error) {
         res.status(404).json({
@@ -213,86 +278,6 @@ exports.generateInvoice = async(req, res, next) => {
 };
 
 
-// exports.getinvoice = async(req,res,next) => {
-//     try{
 
-//         const orderId = req.params.orderId;
-
-//         const order = await Order.findById(orderId)
-
-//         const user = await User.findById(req.userId)
-//         if(!user){
-//             throw new Error("Login first!")
-//         }
-
-//         let date = new Date()
-//         let currentmonth = date.getMonth() + 1
-//         let dueyear = date.getFullYear() + 1
-//         let currentdate =   date.getDate().toString().padStart(2, '0') + '-'  + currentmonth.toString().padStart(2, '0') + '-' + date.getFullYear()
-//         let validitidate =  date.getDate().toString().padStart(2, '0') + '-'  + currentmonth.toString().padStart(2, '0') + '-' + dueyear
-
-//         let subtotal = 0;
-//         order.products.forEach(product => {
-//             subtotal += product.product.productPrice * product.quantity;
-//         });
-
-//         const taxRate = 0.10; 
-//         const tax = subtotal * taxRate;
-//         const total = subtotal + tax;
-
-//         const InvoiceName = 'Invoice-' + user.userName + '-' + orderId + '.pdf';
-
-//         res.setHeader('Content-Type','application/pdf');
-//         res.setHeader('Content-Disposition', 'inline; filename="'+ InvoiceName +'"');
-
-//         const invoicefolder = path.join(__dirname,'..','..','Cutomer_Invoice',InvoiceName)
-
-//         const invoiceDetail = {
-//             shipping: {
-//               name: user.userName,
-//               address: user.address.address,
-//               city: user.address.city,
-//               state: user.address.state,
-//               country: user.address.country,
-//               postal_code: user.address.postal_code
-//             },
-//             items: order.products.map(product => ({
-//                 item: product.product.productName,
-//                 description: product.product.productDescription,
-//                 quantity: product.quantity,
-//                 tax: "10%",
-//                 price: product.product.productPrice
-//             })),
-//             subtotal: subtotal,
-//             total: total,
-//             order_number: orderId,
-//             header:{
-//                 company_name: "Deals",
-//                 company_logo: "C:/Users/adimin/Documents/E-commerce project/assets/company_logo/Screenshot 2024-08-07 171423.png",
-//                 company_address: "Deals. 100 Sunday Hub  1th Floor  Vesu Surat 395011",
-//                 company_contact:"+91 90990-88451",
-//             },
-//             footer:{
-//               text: "Save This Invoice Without Invoice Your Product not exchange and not return"
-//             },
-//             currency_symbol:"$", 
-//             date: {
-//               billing_date:currentdate ,
-//               due_date: validitidate
-//             }
-//         };
-        
-//         niceInvoice(invoiceDetail, invoicefolder);
-
-//         res.status(200).json({
-//             message:"Invoice create"
-//         })
-//     } catch(error) {
-//         res.status(404).json({
-//             message:error.message
-//         })
-
-//     }
-// }
 
 
