@@ -1,5 +1,5 @@
 const Product = require('../../model/product/product')
-const filehelper = require('../../util/removeImageHelper')
+const FileuploadTofirbase = require('../../middlwere/multerUpload')
 
 exports.getProduct = async (req, res, next) => {
     try {
@@ -21,12 +21,6 @@ exports.getProduct = async (req, res, next) => {
 exports.addProduct = async (req,res,next) => {
     try {
 
-        if (!req.file) {
-            return res.status(400).json({ 
-                message: 'Select The File' 
-            });
-        }
-
         const productData = req.body;
 
         const requiredFields = ['productName', 'productPrice' ,'productDescription'];
@@ -36,11 +30,18 @@ exports.addProduct = async (req,res,next) => {
             }
         }
 
-        const imageUrl = req.file.filename
+        const imageUrl = req.file
+        if(!imageUrl){
+            return res.status(400).json({ 
+                message: 'Select The File' 
+            });
+        }
+
+        const certificateDownloadURL = await FileuploadTofirbase.uploadCertifiesToFierbase(imageUrl)
 
         const product = await Product.create({
             ...productData,
-            productImage:imageUrl,
+            productImage:certificateDownloadURL,
             adminId:req.adminId
         })
         
@@ -99,12 +100,17 @@ exports.updateProduct = async(req,res,next) => {
             throw new Error('Only authorized!')
         }
 
-        let productImage = req.body.productImage;
+        let newImage = req.file
 
-        if (req.file) {
-            productImage = req.file.filename;
-            let oldImagePath = updateProduct.productImage
-            filehelper.clearpath(oldImagePath)
+        if (newImage) {
+            
+            if(updateProduct.productImage){
+                await FileuploadTofirbase.deleteFileFromFirebase(updateProduct.productImage)
+            }
+
+            const newAvtarUrl = await FileuploadTofirbase.uploadCertifiesToFierbase(newImage) 
+
+            updateProduct.productImage = newAvtarUrl
             
         } else {
              res.status(400).json({ 
@@ -113,7 +119,6 @@ exports.updateProduct = async(req,res,next) => {
         }
         
         updateProduct.productName = productName
-        updateProduct.productImage = productImage
         updateProduct.productPrice = productPrice
         updateProduct.productDescription = productDescription
 
@@ -147,8 +152,8 @@ exports.deleteProduct = async (req,res,next) => {
             throw new Error('Only authorized!')
         }
 
-        let oldImagePath = Find_Product.productImage
-        filehelper.clearpath(oldImagePath)
+        let existingimage = Find_Product.productImage
+        await FileuploadTofirbase.deleteFileFromFirebase(existingimage)
 
         let Delete_Product = await Product.findByIdAndDelete(productId)
         
